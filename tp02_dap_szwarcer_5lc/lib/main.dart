@@ -12,9 +12,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String title = "Texto inicial";
-  String inputText = "";
-  TextEditingController inputTextController = TextEditingController();
+  final String correctEmail = "meca@gmail.com";
+  final String correctPassword = "aguantemeca01";
+
+  String stepText = "Mail:";
+  String message = "Bienvenido";
+
+  String emailInput = "";
+  TextEditingController controller = TextEditingController();
+
+  bool isEmailStep = true;
 
   @override
   Widget build(BuildContext context) {
@@ -23,31 +30,56 @@ class _MyAppState extends State<MyApp> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Mensaje central
             Text(
-              title,
+              message,
               style: const TextStyle(fontSize: 24),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
+
+            // Texto que cambia (Mail / Contraseña)
+            Text(
+              stepText,
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                controller: inputTextController,
-                keyboardType: TextInputType.text,
+                controller: controller,
+                obscureText: !isEmailStep, // oculta si es contraseña
                 decoration: const InputDecoration(
-                  hintText: 'Enter text here',
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  inputText = inputTextController.text;
-                  title = inputText;
+                  if (isEmailStep) {
+                    if (controller.text == correctEmail) {
+                      emailInput = controller.text;
+                      controller.clear();
+                      isEmailStep = false;
+                      stepText = "Contraseña:";
+                      message = "Ingrese contraseña";
+                    } else {
+                      message = "Mail/Contraseña incorrecto";
+                    }
+                  } else {
+                    if (controller.text == correctPassword) {
+                      message = "Bienvenido $emailInput";
+                    } else {
+                      message = "Mail/Contraseña incorrecto";
+                    }
+                  }
                 });
               },
-              child: const Text("Actualizar texto"),
+              child: const Text("Ingresar"),
             ),
           ],
         ),
